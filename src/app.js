@@ -75,3 +75,25 @@ app.get('/locations', async (req, res) => {
     }
 
 });
+
+//Get single location details
+app.get('/locations/:id', async (req,res) =>{
+    const { id} = req.params;
+    try{
+        const location = await Location.findOne({ where: {id}});
+        if(!location){
+            res.status(404).send({
+                success: false,
+                message: "Location with the id not found"
+            });
+        };
+        res.status(200).send({
+            success: true,
+            message: "Successfully retrived location",
+            location
+        });
+    } catch(err)=>{
+        res.status(500).json(err)
+    }
+});
+
