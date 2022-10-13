@@ -14,3 +14,14 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 
+//set up cross origin
+app.use(cors());
+
+//Get the current homepage
+app.get('/', (req, res) =>{
+    res.status(200).send({
+        success: true,
+        message: "Welcome to residents API"
+    });
+});
+
