@@ -1,4 +1,3 @@
-var sequelize = require("sequelize");
 var path = require("path");
 var dotenv = require("dotenv");
 const { Sequelize } = require("sequelize");
