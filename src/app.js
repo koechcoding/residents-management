@@ -92,8 +92,71 @@ app.get('/locations/:id', async (req,res) =>{
             message: "Successfully retrived location",
             location
         });
-    } catch(err)=>{
+    } catch (err) {
         res.status(500).json(err)
     }
 });
 
+// Edit location
+app.put('/locations/:id', async (req, res) => {
+    const { name, femalePopulation, malePopulation } = req.body;
+    const { id } = req.params;
+    const totalPopulation = femalePopulation + malePopulation;
+    const data = {
+        name,
+        totalfemale: femalePopulation,
+        totalmale: malePopulation,
+        total: totalPopulation
+    }
+    try {
+        const updateLocationInfo = await Location.update({
+            name: name,
+            totalfemale: femalePopulation,
+            totalmale: malePopulation,
+            total: totalPopulation
+        },
+            { where: { id } }
+        );
+        if (!updateLocationInfo || updateLocationInfo[0] === 0) {
+            res.status(404).send({
+                success: false,
+                message: "Location not found"
+            });
+        };
+
+        res.status(200).send({
+            success: true,
+            message: "Location's details Updated successfully.",
+            updateLocationInfo: data
+        });
+    } catch (err) {
+        res.status(500).json(err)
+    }
+});
+
+// Delete all locations
+app.delete("/locations/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const getLocation = await Location.destroy({ where: { id } });
+        if (!getLocation) {
+            res.status(404).send({
+                success: false,
+                message: "The location with that id is not found"
+            });
+        };
+
+        res.status(200).send({
+            success: true,
+            message: "Location deleted successfully."
+        });
+    } catch (err) {
+        res.status(500).json(err)
+    }
+});
+
+app.listen(port, () => {
+    console.log(`App is running at http://127.0.0.1:${port}`)
+});
+
+exports = module.exports = app;
