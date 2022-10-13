@@ -51,3 +51,27 @@ app.post('/locations', async (req, res)=>{
         res.status(500).json(err)
     }
 });
+
+//Get all locations
+app.get('/locations', async (req, res) => {
+    try {
+        const locations = await Location.findAll();
+
+        if (!locations || locations.length < 1) {
+            res.status(404).send({
+                success: false,
+                message: "There are no locations at the moment"
+            });
+        };
+
+        res.status(200).send({
+            success: true,
+            message: "Locations returned successfully.",
+            locations,
+            total: locations.length
+        });
+    } catch (err) {
+        res.status(500).json(err)
+    }
+
+});
