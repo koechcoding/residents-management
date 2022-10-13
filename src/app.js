@@ -25,3 +25,29 @@ app.get('/', (req, res) =>{
     });
 });
 
+//create new locations
+app.post('/locations', async (req, res)=>{
+    const {name, femalePopulation, malePopulation } = req.body;
+    if(!name || !femalePopulation || !malePopulation ) {
+        res.status(400).send({
+            success: false,
+            message: "Name, female population and male population required"
+        });
+    };
+    const totalPopulation = femalePopulation + malePopulation;
+    try{
+        const locationDetails = await Location.create({
+            name: name,
+            totalfemale: femalePopulation,
+            totalmale: malePopulation,
+            total: totalPopulation
+        });
+        res.status(201).send({
+            success: true,
+            message: "location created successfully.",
+            locationDetails
+        });
+    }catch(err){
+        res.status(500).json(err)
+    }
+})
