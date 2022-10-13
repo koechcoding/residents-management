@@ -55,7 +55,88 @@ describe("App tests", ()=>{
             });
     });
 
-    it('should return all locations and population', (done)=>{
+    it('should return all locations and populations', (done) => {
+        // Create a new contact
+        chai.request(app)
+            .post('/locations')
+            .set('content-type', 'application/json')
+            .send(locationData)
+            .end();
+        // Return contacts
+        chai.request(app)
+            .get('/locations')
+            .end((err, res) => {
+                res.should.have.status(200);
+                done();
+            })
+    });
+    
+    it('should return single locations and its population', (done)=>{
+        chai.request(app)
+           .get('/location/1')
+           .end((err, res)=>{
+            res.should.have.status(200);
+            done();
+           })
+    });
+
+    it('should return 404 when location is not available', (done)=>{
+        chai.request(app)
+           .get('location/100')
+           .end((err, res)=>{
+            res.should.have.status(404);
+            done();
+           })
+    });
+
+    it('should update single location data', (done)=>{
         //create a new contact
-    })
-})
+        const dataUpdate = {
+            name: "nairobi",
+            femalePopulation: 670,
+            malePopulation: 346
+        }
+        chai.request(app)
+           .put('/locations/1')
+           .set('content-type', "applocation/json")
+           .send(dataUpdate)
+           end((err, res) =>{
+            res.should.have.status(200);
+            done();
+           })
+    });
+
+    it("should return 404 when updating unavailable location", (done)=>{
+        const dataUpdate ={
+            name: "Nairobi",
+            femalePopulation: 325,
+            malePopulation: 234
+        }
+        chai.request(app)
+           .put('/location/10')
+           .set('content-type', 'application/json')
+           .send(dataUpdate)
+           .end((err, res)=>{
+             res.should.have.status(404);
+             done();
+           })
+    });
+
+    it("should delete/remove a single location", (done)=>{
+        chai.request(app)
+           .delete('/location/1')
+           .end((err, res)=>{
+              res.should.have.status(200);
+              done();
+           })
+    });
+
+    it('should return 404 when location to delete is not available', (done)=>{
+        chai.request(app)
+          .delete('/locations/1')
+          .end((err, res)=>{
+            res.should.have.status(404);
+            done();
+          })
+    });
+});
